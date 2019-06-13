@@ -1,0 +1,15 @@
+.container {
+    margin: 20px;
+}
+
+h1 {
+    margin-bottom: 20px !important;
+}
+
+input {
+    border-radius: 5px;
+}
+
+button {
+    border-radius: 5px !important; 
+}

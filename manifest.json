@@ -1,0 +1,6 @@
+{
+    "name": "DAppWall",
+    "description": "A distributed firewall system",
+    "script": "/dist/script.js",
+    "start_url": "/dist/index.html"
+  }

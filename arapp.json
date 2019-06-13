@@ -1,0 +1,16 @@
+{
+    "roles": [
+      {
+        "name": "Input IP in the Swarm List",
+        "id": "INPUT_IP_ROLE",
+        "params": []
+      }
+    ],
+    "environments": {
+      "default": {
+        "network": "development",
+        "appName": "dappwall.aragonpm.eth"
+      }
+    },
+    "path": "contracts/DAppWallApp.sol"
+  }
