@@ -10,10 +10,7 @@ Template to help you build your first Aragon application following the [tutorial
 ```
 npx aragon run
 ```
-or
-```
-npm run start:aragon:http
-```
+
 Then check the Private key for the Address #1 that aragonAPI will automatically generate for you. You need to connect to Metamask on the browser and then:
 1. First connect to the local 8545 network
 2. Import the account to Metamask using the private key. You can call it something like aragon-test-local.
