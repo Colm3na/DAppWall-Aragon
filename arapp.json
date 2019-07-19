@@ -9,7 +9,7 @@
     "environments": {
       "default": {
         "network": "development",
-        "appName": "dappwall.aragonpm.eth"
+        "appName": "dappwall.open.aragonpm.eth"
       }
     },
     "path": "contracts/DAppWallApp.sol"

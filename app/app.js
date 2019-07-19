@@ -1,14 +1,28 @@
 import Aragon, { providers } from '@aragon/api';
-import 'babel-polyfill';
+import { Web3 } from 'web3';
 
 const initializeApp = () => {
+  const web3 = new Web3("https://rinkeby.infura.io/v1");
   const app = new Aragon(new providers.WindowMessage(window.parent));
 
   const view = document.getElementById('view');
+
+  app.state().subscribe(
+    state => {
+      // the state is null in the beginning, when there are no event emitted from the contract
+      view.innerHTML = `The swarmHashList is ${state ? state.swarmHashList : 0}`
+    },
+    err => {
+      view.innerHTML = 'An error occured, check the console'
+      console.log(err)
+    }
+  )
+
   const container = document.querySelectorAll('div')[0];
   const form = document.getElementById('ip-form');
   // let id = document.getElementById('id');
   const ip = document.getElementById('ip');
+  const formButton = document.getElementById('formButton');
   const label = document.getElementById('label');
   let ipRegExp = /^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)(\/)(\d{2})$/;
   let contractEvents;
@@ -23,30 +37,49 @@ const initializeApp = () => {
       'Access-Control-Allow-Origin': '*',
   }
 
-  app.state().subscribe(
-    state => {
-      // the state is null in the beginning, when there are no event emitted from the contract
-      view.innerHTML = `The swarmHashList is ${state ? state.swarmHashList : 0}`
+  const DappWallABI = [
+    {
+      "constant": false,
+      "inputs": [
+        {
+          "name": "_swarmHashList",
+          "type": "bytes32"
+        }
+      ],
+      "name": "update",
+      "outputs": [],
+      "payable": true,
+      "stateMutability": "payable",
+      "type": "function"
     },
-    err => {
-      view.innerHTML = 'An error occured, check the console'
-      console.log(err)
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "name": "_from",
+          "type": "address"
+        },
+        {
+          "indexed": true,
+          "name": "_swarmHashList",
+          "type": "bytes32"
+        }
+      ],
+      "name": "listIP",
+      "type": "event"
     }
-  )
+  ];
 
   // get smart contract
-  const DappWallContract = new web3.eth.contract(window.dappWallABI, '0x6a826edef7645119bf0f3fea05a480f9bb89fb9a');
+  const DappWallContract = new web3.eth.Contract(DappWallABI, '0x6a826edef7645119bf0f3fea05a480f9bb89fb9a');
 
-  // increment.onclick = () => {
-  //   app.increment()
+  // formButton.onclick = () => {
+  //     console.log('hello')
   // }
-  // decrement.onclick = () => {
-  //   app.decrement()
-  // }
-
   // the real thing
   form.addEventListener('submit', async (e) => {
-    e.preventDefault();
+    console.log('You just submitted a form');
     // delete warning message
     let warnings = document.querySelectorAll('.warning');
     // retrieve red from input
@@ -58,7 +91,8 @@ const initializeApp = () => {
     let ipForm = ip.value;
     // validate input is a ipv4 address
     if ( ipForm.match(ipRegExp) ) {
-
+        console.log('contract', DappWallContract);
+        console.log('contract', DappWallContract.events.allEvents());
         // First of all, call smart contract and get the current IP list from Swarm
         DappWallContract.getPastEvents('listIP', {
             fromBlock: 4445524, 	//meter el bloque donde se despliega el contrato
