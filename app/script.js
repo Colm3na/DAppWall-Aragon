@@ -10,8 +10,6 @@ app.store(async (state, event) => {
   if (state === null) state = initialState;
 
   switch (event.event) {
-    case INITIALIZATION_TRIGGER:
-      return { swarmHashList: await getValue() }
     case 'listIP':
       return { swarmHashList: await getValue() }
     default:
@@ -22,8 +20,11 @@ app.store(async (state, event) => {
 async function getValue() {
   // Get current value from the contract by calling the public getter
   // app.call() returns a single-emission observable that we can immediately turn into a promise
-  const value = await app.call('value').toPromise();
-  console.log('Value is', value);
-  console.log('Value with parseInt', parseInt(value, 10));
-  return parseInt(value, 10)
+  return new Promise(resolve => {
+    app
+      .call('value')
+      .first()
+      .map(value => parseInt(value, 10))
+      .subscribe(resolve)
+  })
 }

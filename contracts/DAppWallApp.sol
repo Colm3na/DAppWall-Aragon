@@ -20,7 +20,7 @@ contract DAppWallApp is AragonApp {
         initialized();
     }
 
-    function update(bytes32 _swarmHashList) external auth(INPUT_IP_ROLE) {
+    function update(bytes32 _swarmHashList) auth(INPUT_IP_ROLE) external {
         // Events are emitted using 'emit', followed by
         // the name of the event and the arguments
         // (if any) in parentheses. Any such invocation
