@@ -28,8 +28,12 @@ const initializeApp = () => {
 
 
   formButton.onclick = () => {
+    // dirección smart contract confirmada 0x8252E41CBB3124B21C1BeB3AF14a5a6431DbF934
+    // o es de la app???
+    // dirección cambiante
+    app.pastEvents('0x6A826EDeF7645119bf0f3FEA05a480f9bb89fb9A').toPromise()
+    console.log('web3ETH', app.pastEvents('0x6A826EDeF7645119bf0f3FEA05a480f9bb89fb9A').toPromise())
     app.update(ip.value)
-    console.log('app.formButton is ', app.update(ip.value))
   }
 
 }
