@@ -24,15 +24,37 @@ const initializeApp = () => {
   let ipRegExp = /^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)(\/)(\d{2})$/;
   let contractEvents;
   let swarmHash;
+  let IPList;
   let swarmHashList;
+  let headers = {
+    'Accept': 'application/json',
+    'Content-Type': 'application/json',
+    'Access-Control-Allow-Origin': '*',
+  }
 
 
   formButton.onclick = () => {
-    // dirección smart contract confirmada 0x8252E41CBB3124B21C1BeB3AF14a5a6431DbF934
-    // o es de la app???
-    // dirección cambiante
-    app.pastEvents('0x6A826EDeF7645119bf0f3FEA05a480f9bb89fb9A').toPromise()
-    console.log('web3ETH', app.pastEvents('0x6A826EDeF7645119bf0f3FEA05a480f9bb89fb9A').toPromise())
+
+    fetch(`https://swarm-gateways.net/bzz:/f3420ec94e0e74516ef8f00a6bb29da1871ed24a6dadf69043c05e7f4bcd4c55`, {
+      headers: headers,
+      method: 'GET',
+    })
+    .then( res => res.text())
+    .then( data => {
+      console.log('IP list in Swarm', data);
+      IPList = JSON.parse(data);
+    })
+
+    // app.state().subscribe( data => {
+    //   console.log('state is', data);
+    // })
+  
+    let pastEvents = () => {
+      return app.pastEvents(0, 1000000000000).toPromise().then( events => { return events })
+    }
+    let getPastEvents = pastEvents()
+    getPastEvents.then( result => { console.log('pastEvents', result) })
+
     app.update(ip.value)
   }
 
