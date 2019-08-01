@@ -22,18 +22,29 @@ const initializeApp = () => {
   const formButton = document.getElementById('listIP');
   const label = document.getElementById('label');
   let ipRegExp = /^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)(\/)(\d{2})$/;
-  let swarmHash;
   let ipInput;
   let IPList = [];
+  let IPClientList;
   let formData;
   let swarmHashList;
   let headers = {
     'Accept': 'application/json',
     'Content-Type': 'application/json',
   }
+  let deleteWarningMessages = () => {
+    let warnings = document.querySelectorAll('.warning');
+    // retrieve red from input
+    ip.style.borderColor = '';
+    if ( warnings.length > 0 ) {
+        warnings.forEach( w => w.remove() );
+    }
+  }
 
 
   formButton.onclick = () => {
+
+    // first of all, delete all warning messages
+    deleteWarningMessages()
 
     ipInput = ip.value;
     formData = {
@@ -43,49 +54,54 @@ const initializeApp = () => {
 
     console.log(`ipInput is`, ipInput);
 
-    // if (ipInput.match(ipRegExp)) {
-      let pastEvents = () => {
-        return app.pastEvents(0, 1000000000000).toPromise().then( events => { return events });
-      }
-      let getPastEvents = pastEvents()
+    let pastEvents = () => {
+      return app.pastEvents(0, 1000000000000).toPromise().then( events => { return events });
+    }
+    let getPastEvents = pastEvents();
 
-      let postToSwarm = (IPList) => {
-        // POST IP list to Swarm
-        fetch('https://swarm-gateways.net/bzz:/', {
-          headers: headers,
-          method: 'POST',
-          body: JSON.stringify(IPList)
-        })
-        .then( res => res.text())
-        .then( data => {
-          console.log('new swarmHashList', data);
+    let postToSwarm = (IPList) => {
+      // POST IP list to Swarm
+      fetch('https://swarm-gateways.net/bzz:/', {
+        headers: headers,
+        method: 'POST',
+        body: JSON.stringify(IPList)
+      })
+      .then( res => res.text())
+      .then( data => {
+        console.log('new swarmHashList', data);
 
-          swarmHashList = '0x' + data; // transform again swarmHashList in bytes 32
+        swarmHashList = '0x' + data; // transform again swarmHashList in bytes 32
 
-          // POST SwarmHashList to smart DappWallContract
-          app.update(swarmHashList).toPromise();
+        // POST SwarmHashList to smart DappWallContract
+        app.update(swarmHashList).toPromise();
 
-        })
-      }
+      })
+    }
 
-      let getFromSwarm = (swarmHashList) => {
-        fetch(`https://swarm-gateways.net/bzz:/${swarmHashList}`, {
-          headers: headers,
-          method: 'GET',
-        })
-        .then( res => res.text())
-        .then( data => {
-          console.log('IP list in Swarm', data);
-          IPList = JSON.parse(data);
+    let getFromSwarm = (swarmHashList) => {
+      fetch(`https://swarm-gateways.net/bzz:/${swarmHashList}`, {
+        headers: headers,
+        method: 'GET',
+      })
+      .then( res => res.text())
+      .then( data => {
+        console.log('IP list in Swarm', data);
+        IPList = JSON.parse(data);
 
-          IPList.push(formData);
-          console.log('This is the current ip list', IPList);
+        IPList.push(formData);
+        console.log('This is the current ip list', IPList);
 
-          postToSwarm(IPList);
-        })
-      }
+        postToSwarm(IPList);
+      })
+    }
 
-      getPastEvents.then( result => { 
+    // main function
+    getPastEvents.then( result => {
+      // check if input is a valid ip and if label has been selected
+      // also check if a label has been chosen
+      if (ipInput.match(ipRegExp) && label.value !== '') {
+
+        // check contract's past events
         console.log('pastEvents', result);
 
         // case this is the first event to occur
@@ -98,15 +114,27 @@ const initializeApp = () => {
           swarmHashList = result[result.length-1].raw.topics[2];
           swarmHashList = swarmHashList.slice(2, swarmHashList.length); // swarm doesn't accept '0x' in URL. we take it away
           console.log('swarmHashList is', swarmHashList);
-  
+
           getFromSwarm(swarmHashList);
-
         }
+      // in case input is not a valip ip or label is empty: warning messages
+      } else {
+        
+        ip.style['border-color'] = 'red';
+        let warningMessage = document.createElement('span');
+        warningMessage.className = 'warning';
+        warningMessage.style.color = 'red';
 
-      })
+        if (label.value === '') {
+          warningMessage.innerHTML = 'Please, choose either DROP or ACCEPT';
+        } else {
+          warningMessage.innerHTML = 'Please, enter a correct IP range';
+        }
+        document.body.appendChild(warningMessage);
 
+      }
 
-    // }
+    })
 
   }
 
