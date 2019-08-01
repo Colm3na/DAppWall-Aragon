@@ -22,40 +22,92 @@ const initializeApp = () => {
   const formButton = document.getElementById('listIP');
   const label = document.getElementById('label');
   let ipRegExp = /^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)(\/)(\d{2})$/;
-  let contractEvents;
   let swarmHash;
-  let IPList;
+  let ipInput;
+  let IPList = [];
+  let formData;
   let swarmHashList;
   let headers = {
     'Accept': 'application/json',
     'Content-Type': 'application/json',
-    'Access-Control-Allow-Origin': '*',
   }
 
 
   formButton.onclick = () => {
 
-    fetch(`https://swarm-gateways.net/bzz:/f3420ec94e0e74516ef8f00a6bb29da1871ed24a6dadf69043c05e7f4bcd4c55`, {
-      headers: headers,
-      method: 'GET',
-    })
-    .then( res => res.text())
-    .then( data => {
-      console.log('IP list in Swarm', data);
-      IPList = JSON.parse(data);
-    })
-
-    // app.state().subscribe( data => {
-    //   console.log('state is', data);
-    // })
-  
-    let pastEvents = () => {
-      return app.pastEvents(0, 1000000000000).toPromise().then( events => { return events })
+    ipInput = ip.value;
+    formData = {
+      ip: ip.value,
+      label: label.value
     }
-    let getPastEvents = pastEvents()
-    getPastEvents.then( result => { console.log('pastEvents', result) })
 
-    app.update(ip.value)
+    console.log(`ipInput is`, ipInput);
+
+    // if (ipInput.match(ipRegExp)) {
+      let pastEvents = () => {
+        return app.pastEvents(0, 1000000000000).toPromise().then( events => { return events });
+      }
+      let getPastEvents = pastEvents()
+
+      let postToSwarm = (IPList) => {
+        // POST IP list to Swarm
+        fetch('https://swarm-gateways.net/bzz:/', {
+          headers: headers,
+          method: 'POST',
+          body: JSON.stringify(IPList)
+        })
+        .then( res => res.text())
+        .then( data => {
+          console.log('new swarmHashList', data);
+
+          swarmHashList = '0x' + data; // transform again swarmHashList in bytes 32
+
+          // POST SwarmHashList to smart DappWallContract
+          app.update(swarmHashList).toPromise();
+
+        })
+      }
+
+      let getFromSwarm = (swarmHashList) => {
+        fetch(`https://swarm-gateways.net/bzz:/${swarmHashList}`, {
+          headers: headers,
+          method: 'GET',
+        })
+        .then( res => res.text())
+        .then( data => {
+          console.log('IP list in Swarm', data);
+          IPList = JSON.parse(data);
+
+          IPList.push(formData);
+          console.log('This is the current ip list', IPList);
+
+          postToSwarm(IPList);
+        })
+      }
+
+      getPastEvents.then( result => { 
+        console.log('pastEvents', result);
+
+        // case this is the first event to occur
+        if ( result.length === 0) {
+          IPList.push(formData);
+          postToSwarm(IPList);
+
+        } else {
+
+          swarmHashList = result[result.length-1].raw.topics[2];
+          swarmHashList = swarmHashList.slice(2, swarmHashList.length); // swarm doesn't accept '0x' in URL. we take it away
+          console.log('swarmHashList is', swarmHashList);
+  
+          getFromSwarm(swarmHashList);
+
+        }
+
+      })
+
+
+    // }
+
   }
 
 }
