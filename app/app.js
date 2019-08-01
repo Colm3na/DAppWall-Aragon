@@ -21,16 +21,17 @@ const initializeApp = () => {
   const ip = document.getElementById('ip');
   const formButton = document.getElementById('listIP');
   const label = document.getElementById('label');
+  let IPClientList = document.getElementById('IPList');
   let ipRegExp = /^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)(\/)(\d{2})$/;
   let ipInput;
   let IPList = [];
-  let IPClientList;
   let formData;
   let swarmHashList;
   let headers = {
     'Accept': 'application/json',
     'Content-Type': 'application/json',
   }
+
   let deleteWarningMessages = () => {
     let warnings = document.querySelectorAll('.warning');
     // retrieve red from input
@@ -40,10 +41,20 @@ const initializeApp = () => {
     }
   }
 
+  let createIPListElement = (IPList) => {
+    let domLiString = '';
 
+    IPList.forEach( IP => {
+      domLiString = domLiString + `<li>${IP.ip}  ${IP.label}</li>`;
+    })
+
+    IPClientList.innerHTML = domLiString;
+  }
+
+  // action starts
   formButton.onclick = () => {
 
-    // first of all, delete all warning messages
+    // delete all warning messages
     deleteWarningMessages()
 
     ipInput = ip.value;
@@ -73,7 +84,9 @@ const initializeApp = () => {
         swarmHashList = '0x' + data; // transform again swarmHashList in bytes 32
 
         // POST SwarmHashList to smart DappWallContract
-        app.update(swarmHashList).toPromise();
+        app.update(swarmHashList).toPromise().then( () => {
+          createIPListElement(IPList);
+        });
 
       })
     }
