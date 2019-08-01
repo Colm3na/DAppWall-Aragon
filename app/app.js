@@ -46,6 +46,12 @@ const initializeApp = () => {
     }
   }
 
+  let getSwarHashList = (contractEvents) => {
+    swarmHashList = contractEvents[contractEvents.length-1].raw.topics[2];
+    swarmHashList = swarmHashList.slice(2, swarmHashList.length); // swarm doesn't accept '0x' in URL. we take it away
+    return swarmHashList;
+  }
+
   let postToSwarm = (IPList) => {
     // POST IP list to Swarm
     fetch('https://swarm-gateways.net/bzz:/', {
@@ -109,9 +115,8 @@ const initializeApp = () => {
   getPastEvents.then( events => {
     contractEvents = events;
     // check contract's past events
-    console.log('These are the past events of contract', events)
-    swarmHashList = contractEvents[contractEvents.length-1].raw.topics[2];
-    swarmHashList = swarmHashList.slice(2, swarmHashList.length); // swarm doesn't accept '0x' in URL. we take it away
+    console.log('These are the past events of contract', contractEvents)
+    swarmHashList = getSwarHashList(contractEvents);
     console.log('This is the swarmHashList', swarmHashList)
 
     getFromSwarm(swarmHashList).then( iplist => {
@@ -145,6 +150,8 @@ const initializeApp = () => {
         postToSwarm(IPList);
 
       } else {
+
+        swarmHashList = getSwarHashList(contractEvents);
 
         getFromSwarm(swarmHashList).then( iplist => {
           IPList = iplist;
