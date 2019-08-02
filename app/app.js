@@ -46,7 +46,7 @@ const initializeApp = () => {
     }
   }
 
-  let getSwarHashList = (contractEvents) => {
+  let getSwarmHashList = (contractEvents) => {
     swarmHashList = contractEvents[contractEvents.length-1].raw.topics[2];
     swarmHashList = swarmHashList.slice(2, swarmHashList.length); // swarm doesn't accept '0x' in URL. we take it away
     return swarmHashList;
@@ -99,7 +99,17 @@ const initializeApp = () => {
     let domLiString = '';
 
     IPList.forEach( IP => {
-      domLiString = domLiString + `<li>${IP.ip}  ${IP.label}</li>`;
+      // in case this ip is actually a list of ips
+      console.log('IP is', IP);
+      if (Array.isArray(IP.ip)) {
+        let listLabel = IP.label;
+        IP.ip.forEach( ip => {
+          domLiString = domLiString + `<li>${ip}  ${listLabel}</li>`;
+        })
+      // case it is just one ip
+      } else {
+        domLiString = domLiString + `<li>${IP.ip}  ${IP.label}</li>`;
+      }
     })
 
     IPClientList.innerHTML = domLiString;
@@ -116,7 +126,7 @@ const initializeApp = () => {
     contractEvents = events;
     // check contract's past events
     console.log('These are the past events of contract', contractEvents)
-    swarmHashList = getSwarHashList(contractEvents);
+    swarmHashList = getSwarmHashList(contractEvents);
     console.log('This is the swarmHashList', swarmHashList)
 
     getFromSwarm(swarmHashList).then( iplist => {
@@ -153,7 +163,7 @@ const initializeApp = () => {
 
     } else {
 
-      swarmHashList = getSwarHashList(contractEvents);
+      swarmHashList = getSwarmHashList(contractEvents);
 
       getFromSwarm(swarmHashList).then( iplist => {
         IPList = iplist;
@@ -197,6 +207,7 @@ const initializeApp = () => {
 
       updateIPList(formData);
     
+    // case this is only one ip
     } else {
 
       formData = {
