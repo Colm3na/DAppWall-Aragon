@@ -126,6 +126,43 @@ const initializeApp = () => {
 
   })
 
+  let checkAndCreateWarnings = (labelValue, list) => {
+    ip.style['border-color'] = 'red';
+    let warningMessage = document.createElement('span');
+    warningMessage.className = 'warning';
+    warningMessage.style.color = 'red';
+
+    if (labelValue === '') {
+      warningMessage.innerHTML = 'Please, choose either DROP or ACCEPT';
+    } else {
+      if (list) {
+        warningMessage.innerHTML = 'One of the IPs entered is not a valid IP range';
+      } else {
+        warningMessage.innerHTML = 'Please, enter a correct IP range';
+      }
+    }
+    document.body.appendChild(warningMessage);
+
+  }
+
+  let updateIPList = (formData) => {
+    // case this is the first event to occur
+    if ( contractEvents.length === 0) {
+      IPList.push(formData);
+      postToSwarm(IPList);
+
+    } else {
+
+      swarmHashList = getSwarHashList(contractEvents);
+
+      getFromSwarm(swarmHashList).then( iplist => {
+        IPList = iplist;
+        postToSwarm(IPList);
+      })
+
+    }
+  }
+
   // action starts
   formButton.onclick = () => {
 
@@ -133,47 +170,48 @@ const initializeApp = () => {
     deleteWarningMessages()
 
     ipInput = ip.value;
-    formData = {
-      ip: ip.value,
-      label: label.value
-    }
 
     console.log(`ipInput is`, ipInput);
 
-    // check if input is a valid ip and if label has been selected
-    // also check if a label has been chosen
-    if (ipInput.match(ipRegExp) && label.value !== '') {
+    // check if input is a list and if it is, match the regex for each element
+    // also check if a label has been selected for the list
+    if(ip.value.includes(',') && label.value !== '') {
+      let inputList = ip.value.split(',');
+      console.log('LIST is', inputList); 
+      let IPListArray = [];
 
-      // case this is the first event to occur
-      if ( contractEvents.length === 0) {
-        IPList.push(formData);
-        postToSwarm(IPList);
+      // check if input is a valid ip 
+      inputList.forEach( input => {
+        if (input.match(ipRegExp)) {
+          IPListArray.push(input);
+        } else {
+          checkAndCreateWarnings(label.value, true);
+        }
+      })
 
-      } else {
-
-        swarmHashList = getSwarHashList(contractEvents);
-
-        getFromSwarm(swarmHashList).then( iplist => {
-          IPList = iplist;
-          postToSwarm(IPList);
-        })
-
+      console.log('Ip list array is', IPListArray);
+      formData = {
+        ip: IPListArray,
+        label: label.value
       }
-    // in case input is not a valip ip or label is empty: warning messages
+
+      updateIPList(formData);
+    
     } else {
-      
-      ip.style['border-color'] = 'red';
-      let warningMessage = document.createElement('span');
-      warningMessage.className = 'warning';
-      warningMessage.style.color = 'red';
 
-      if (label.value === '') {
-        warningMessage.innerHTML = 'Please, choose either DROP or ACCEPT';
-      } else {
-        warningMessage.innerHTML = 'Please, enter a correct IP range';
+      formData = {
+        ip: ip.value,
+        label: label.value
       }
-      document.body.appendChild(warningMessage);
 
+      // check if input is a valid ip and if label has been selected
+      if (ipInput.match(ipRegExp) && label.value !== '') {
+        updateIPList(formData)
+      
+      // in case input is not a valip ip or label is empty: warning messages
+      } else {
+        checkAndCreateWarnings(lavel.value, false);
+      }
     }
 
   }
