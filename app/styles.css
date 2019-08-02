@@ -13,3 +13,22 @@ input {
 button {
     border-radius: 5px !important; 
 }
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+.fadeIn {
+    animation-name: fadeIn;
+}
+
+.warning {
+    text-align: center;
+    color: red;
+    padding-top: 5px;
+}

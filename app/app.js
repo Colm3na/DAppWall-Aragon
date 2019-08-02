@@ -16,7 +16,6 @@ const initializeApp = () => {
     }
   )
 
-  const container = document.querySelectorAll('div')[0];
   const ip = document.getElementById('ip');
   const formButton = document.getElementById('listIP');
   const label = document.getElementById('label');
@@ -35,6 +34,11 @@ const initializeApp = () => {
   let formData = {
     ip: ip.value,
     label: label.value
+  }
+
+  // not using jQuery has its drawbacks
+  let insertAfter = (el, referenceNode) => {
+    referenceNode.parentNode.insertBefore(el, referenceNode.nextSibling);
   }
 
   let deleteWarningMessages = () => {
@@ -91,12 +95,11 @@ const initializeApp = () => {
 
         // in case that retrieving IP list from Swarm fails
         if (IPList.Msg) {
-          let warningMessage = document.createElement('span');
+          let warningMessage = document.createElement('p');
           warningMessage.className = 'warning';
-          warningMessage.style.color = 'red';
           warningMessage.style.textAlign = 'center';
           warningMessage.innerHTML = 'Swarm IP list couldn\'t be fetched';
-          container.body.appendChild(warningMessage);
+          insertAfter(warningMessage, warning);
           warning.removeAttribute('hidden');
         }
 
@@ -156,9 +159,8 @@ const initializeApp = () => {
     warning.removeAttribute('hidden');
 
     ip.style['border-color'] = 'red';
-    let warningMessage = document.createElement('span');
+    let warningMessage = document.createElement('p');
     warningMessage.className = 'warning';
-    warningMessage.style.color = 'red';
 
     if (labelValue === '') {
       warningMessage.innerHTML = 'Please, choose either DROP or ACCEPT';
@@ -169,7 +171,8 @@ const initializeApp = () => {
         warningMessage.innerHTML = 'Please, enter a correct IP range';
       }
     }
-    document.body.appendChild(warningMessage);
+
+    insertAfter( warningMessage, warning)
 
   }
 
