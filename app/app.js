@@ -23,6 +23,8 @@ const initializeApp = () => {
   let IPClientList = document.getElementById('IPList');
   let ipRegExp = /^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)(\/)(\d{2})$/;
   let ipInput;
+  let loading = document.getElementById('loading');
+  let warning = document.getElementById('warning');
   var contractEvents;
   let IPList = [];
   let swarmHashList;
@@ -63,9 +65,12 @@ const initializeApp = () => {
 
       swarmHashList = '0x' + data; // transform again swarmHashList in bytes 32
 
+      loading.removeAttribute('hidden');
+
       // POST SwarmHashList to smart DappWallContract
       app.update(swarmHashList).toPromise().then( () => {
         createIPListElement(IPList);
+        loading.setAttribute('hidden', true);
           // reload site
           window.location.reload(true);
       });
@@ -83,7 +88,18 @@ const initializeApp = () => {
       .then( data => {
         console.log('IP list in Swarm', data);
         IPList = JSON.parse(data);
-  
+
+        // in case that retrieving IP list from Swarm fails
+        if (IPList.Msg) {
+          let warningMessage = document.createElement('span');
+          warningMessage.className = 'warning';
+          warningMessage.style.color = 'red';
+          warningMessage.style.textAlign = 'center';
+          warningMessage.innerHTML = 'Swarm IP list couldn\'t be fetched';
+          container.body.appendChild(warningMessage);
+          warning.removeAttribute('hidden');
+        }
+
         // check if there is a new ip & label pair to add
         if ( formData.ip !== '' && formData !== '' ) {
           IPList.push(formData);
@@ -136,6 +152,9 @@ const initializeApp = () => {
   })
 
   let checkAndCreateWarnings = (labelValue, list) => {
+    // warning symbol appears
+    warning.removeAttribute('hidden');
+
     ip.style['border-color'] = 'red';
     let warningMessage = document.createElement('span');
     warningMessage.className = 'warning';
@@ -177,6 +196,8 @@ const initializeApp = () => {
 
     // delete all warning messages
     deleteWarningMessages()
+    // hide warning symbol
+    warning.setAttribute('hidden', true);
 
     ipInput = ip.value;
 
