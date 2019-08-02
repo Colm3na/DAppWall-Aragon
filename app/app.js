@@ -1,6 +1,4 @@
 import Aragon, { providers } from '@aragon/api';
-import { resolve } from 'dns';
-import { reject } from 'q';
 
 const initializeApp = () => {
   const app = new Aragon(new providers.WindowMessage(window.parent));
@@ -68,6 +66,8 @@ const initializeApp = () => {
       // POST SwarmHashList to smart DappWallContract
       app.update(swarmHashList).toPromise().then( () => {
         createIPListElement(IPList);
+          // reload site
+          window.location.reload(true);
       });
 
     })
@@ -95,12 +95,11 @@ const initializeApp = () => {
     })
   }
 
-  let createIPListElement = (IPList) => {
+  let createIPListElement = (IPList) => {    
     let domLiString = '';
 
     IPList.forEach( IP => {
       // in case this ip is actually a list of ips
-      console.log('IP is', IP);
       if (Array.isArray(IP.ip)) {
         let listLabel = IP.label;
         IP.ip.forEach( ip => {
@@ -206,7 +205,7 @@ const initializeApp = () => {
       }
 
       updateIPList(formData);
-    
+
     // case this is only one ip
     } else {
 
@@ -218,7 +217,6 @@ const initializeApp = () => {
       // check if input is a valid ip and if label has been selected
       if (ipInput.match(ipRegExp) && label.value !== '') {
         updateIPList(formData)
-      
       // in case input is not a valip ip or label is empty: warning messages
       } else {
         checkAndCreateWarnings(label.value, false);
