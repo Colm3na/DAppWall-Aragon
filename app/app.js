@@ -221,7 +221,7 @@ const initializeApp = () => {
       
       // in case input is not a valip ip or label is empty: warning messages
       } else {
-        checkAndCreateWarnings(lavel.value, false);
+        checkAndCreateWarnings(label.value, false);
       }
     }
 
