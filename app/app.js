@@ -4,17 +4,7 @@ const initializeApp = () => {
   const app = new Aragon(new providers.WindowMessage(window.parent));
 
   const view = document.getElementById('view');
-
-  app.state().subscribe(
-    state => {
-      // the state is null in the beginning, when there are no event emitted from the contract
-      view.innerHTML = `The swarmHashList is ${state ? state.swarmHashList : 0}`
-    },
-    err => {
-      view.innerHTML = 'An error occured, check the console'
-      console.log(err)
-    }
-  )
+  view.innerHTML = `The swarmHashList is ...`
 
   const ip = document.getElementById('ip');
   const formButton = document.getElementById('listIP');
@@ -70,6 +60,11 @@ const initializeApp = () => {
       swarmHashList = '0x' + data; // transform again swarmHashList in bytes 32
 
       loading.removeAttribute('hidden');
+
+      // timeout for loading symbol (in case Metamask is not enabled)
+      setTimeout( () => {
+        loading.setAttribute('hidden', true);
+      }, 5000)
 
       // POST SwarmHashList to smart DappWallContract
       app.update(swarmHashList).toPromise().then( () => {
@@ -146,6 +141,7 @@ const initializeApp = () => {
     console.log('These are the past events of contract', contractEvents)
     swarmHashList = getSwarmHashList(contractEvents);
     console.log('This is the swarmHashList', swarmHashList)
+    view.innerHTML = `The swarmHashList is ${swarmHashList}`
 
     getFromSwarm(swarmHashList).then( iplist => {
       IPList = iplist;
