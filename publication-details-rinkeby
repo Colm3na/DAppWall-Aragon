@@ -1,0 +1,35 @@
+ana@ana-RisingStar:~/aragon-dao/upload-dappwall$ npx aragon apm publish major --environment rinkeby
+  ✔ Running prepublish script
+  ✔ Running prepublish script
+  ✔ Check IPFS
+  ✔ Applying version bump (major)
+  ✔ Building frontend
+  ✔ Deploy contract
+  ✔ Determine contract address for version
+  ✔ Prepare files for publishing
+  ✔ Generate application artifact
+  ✔ Publish intent
+
+ The following information will be published: 
+ Contract address: 0xAbA9E234fBb9333b0eCAD095CCf9693FB31A71cD 
+ Content (ipfs): QmUnV22E76cRrYUm2UoXh55GxyBzKxvhVmjyMECDoDyvsM 
+
+? Publish to dappwallexp.open.aragonpm.eth repo Yes
+
+  ✔ Publish dappwallexp.open.aragonpm.eth
+  ✔ Fetch published repo
+
+ Successfully published dappwallexp.open.aragonpm.eth v1.0.0 : 
+
+Transaction hash: 0x601b82e9b2dfd9de155e2fa123a75e991389e9d9a4b6f8ef3e6ad18027f7a0a7 
+
+? Propagate content Yes
+
+  ✔ Check IPFS
+  ✔ Connect to IPFS
+  ✔ Fetch the links
+  ✔ Query gateways
+
+ Queried 56 CIDs at 7 gateways 
+ Requests succeeded: 235 
+ Requests failed: 157 

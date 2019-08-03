@@ -2,4 +2,8 @@ node_modules
 build
 .cache
 dist
-migrations
+ipfs.cmd
+package-lock.json
+coverage.json
+coverage
+.vscode
