@@ -1,6 +1,12 @@
-# DAppWall
+<img src="./app/assets/DAppWall.png" alt="DAppWall" width="200"/>
 
 DAppWall was just published to Rinkeby testnet!! 🎉🎉🎉
+
+
+![DAppWall-Demo](./app/assets/DAppWallDemo.gif)
+
+
+
 
 Here all the infos:
 
@@ -12,7 +18,10 @@ Here all the infos:
 
 # To install in your DAO do:
 
-1. `dao install <name-of-your-dao>.aragonid.eth dappwallexp.open.aragonpm.eth 1.0.0 --env rinkeby`
+1. 
+```
+dao install <name-of-your-dao>.aragonid.eth dappwallexp.open.aragonpm.eth 1.0.0 --env rinkeby
+```
 
 2. Then vote for it to be added into the DAO apps set.
 
@@ -20,10 +29,13 @@ Here all the infos:
 
 First, check your `dappwallexp` proxy address by doing:
 `dao apps dappwalltest0.aragonid.eth --all  --env rinkeby`
+<br>
 It should appear as the last one of the apps list, as `permissionless app`.
 
 Finally, execute:
-`dao acl create <your-daos-name>.aragonid.eth <dappwallexp-proxy-address>  INPUT_IP_ROLE <your-daos-voting-app-address> <your-daos-voting-app-address> --env rinkeby`
+```
+dao acl create <your-daos-name>.aragonid.eth <dappwallexp-proxy-address>  INPUT_IP_ROLE <your-daos-voting-app-address> <your-daos-voting-app-address> --env rinkeby
+```
 
 4. You need to vote once more to grant permissions to this app.
 
@@ -72,9 +84,12 @@ Note: it takes a while to load on the browser.
 # In a fresh installation
 
 Recently I upgraded to Ubuntu Bionic and had a clean install. I realized there that I had to run
-- npm install --save core-js
-- npm install --save regenerator-runtime 
-- npm install --save @aragon/ui
+
+```
+npm install --save core-js
+npm install --save regenerator-runtime 
+npm install --save @aragon/ui
+```
 
 first before being able to run a successfull `npx aragon run`.
 Also I had to install python2.7 before all these steps, since apparently node-gyp requires this old python version. To install it, just run 
