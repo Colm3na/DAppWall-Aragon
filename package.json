@@ -6,7 +6,11 @@
     "@aragon/api": "^2.0.0-beta.4",
     "@aragon/client": "^1.1.0",
     "@aragon/os": "^4.0.1",
-    "ps-node": "^0.1.6"
+    "fs": "0.0.1-security",
+    "node-fetch": "^2.6.0",
+    "ps-node": "^0.1.6",
+    "shelljs": "^0.8.3",
+    "web3": "^1.2.1"
   },
   "devDependencies": {
     "@aragon/cli": "^5.4.0",
