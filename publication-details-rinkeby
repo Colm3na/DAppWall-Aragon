@@ -1,4 +1,4 @@
-ana@ana-RisingStar:~/aragon-dao/upload-dappwall$ npx aragon apm publish major --environment rinkeby
+ana@ana-RisingStar:~/aragon-dao/upload-dappwall$ aragon apm publish major --environment rinkeby
   ✔ Running prepublish script
   ✔ Running prepublish script
   ✔ Check IPFS
@@ -33,3 +33,10 @@ Transaction hash: 0x601b82e9b2dfd9de155e2fa123a75e991389e9d9a4b6f8ef3e6ad18027f7
  Queried 56 CIDs at 7 gateways 
  Requests succeeded: 235 
  Requests failed: 157 
+
+---> Radspec addition:
+
+ ✔ Successfully published dappwallexp.open.aragonpm.eth v2.1.0: 
+ ℹ Contract address: 0x2eDBb3E96d03F406dd1c1f4ce14BE1d4e03D877E
+ ℹ Content (ipfs): QmekxDrMeWJQDXhGxTVHqZcnJsvXmSc49ggFoFcCKTsKkR
+ ℹ Transaction hash: 0x79bdf3a1d70998a80c9caae6b1a6e7dd70c6474917ca470e60fa88c83710b1c1

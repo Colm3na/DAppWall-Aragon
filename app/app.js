@@ -117,11 +117,11 @@ const initializeApp = () => {
       if (Array.isArray(IP.ip)) {
         let listLabel = IP.label;
         IP.ip.forEach( ip => {
-          domLiString = domLiString + `<li>${ip}  ${listLabel}</li>`;
+          domLiString = domLiString + `<li>iptables -A INPUT -s ${ip} -j ${listLabel}</li>`;
         })
       // case it is just one ip
       } else {
-        domLiString = domLiString + `<li>${IP.ip}  ${IP.label}</li>`;
+        domLiString = domLiString + `<li>iptables -A INPUT -s ${IP.ip} -j ${IP.label}</li>`;
       }
     })
 

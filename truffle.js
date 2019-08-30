@@ -46,6 +46,11 @@ const providerForNetwork = (network) => (
   }
 )
 module.exports = {
+  compilers: {
+    solc: {
+      version: '^0.4.4'
+    }
+  },
   networks: {
     development: {
       host: 'localhost',

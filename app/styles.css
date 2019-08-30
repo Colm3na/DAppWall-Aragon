@@ -6,6 +6,10 @@ h1 {
     margin-bottom: 20px !important;
 }
 
+ul {
+    list-style: none;
+}
+
 input {
     border-radius: 5px;
 }

@@ -16,10 +16,18 @@ contract DAppWallApp is AragonApp {
      // State
     bytes32 public swarmHashList;
 
+    // /**
+    // * @notice Initialize DAppWall app with `@formatPct(_swarmHashList)`% for the Swarm hash list
+    // * @param _swarmHashList Hash that leads to the IP list stored in Swarm
+    // */
     function initialize() public onlyInit {
         initialized();
     }
 
+    /**
+    * @notice Change Swarm hash list to `_swarmHashList`
+    * @param _swarmHashList New Swarm hash list
+    */
     function update(bytes32 _swarmHashList) auth(INPUT_IP_ROLE) external {
         // Events are emitted using 'emit', followed by
         // the name of the event and the arguments
